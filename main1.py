@@ -30,7 +30,10 @@ def countNumbers(data_set):
         pb_dict[data[5]] += 1
     
     return num_dict, pb_dict
-    
+
+def print_line():
+    print("********************************************************************************************************************************")
+    return
 
 def analyze_ds_patterns(data_set):
     """ Analyzes the pattern of each drawing based on Low, Medium, and High numbers: l = 1 - 22  m = 23 - 46  h = 47 - 69  """
@@ -59,9 +62,10 @@ def analyze_ds_patterns(data_set):
     sorted_patterns = sorted(patterns.items(), key=lambda x: x[1], reverse=True)
     highest_pattern = sorted_patterns[0][0]
     print(f'This is the highest repeating pattern: {highest_pattern}')
-    return patterns
+    print_line()
+    return highest_pattern
 
-      
+
 def countRepeats(five, pb):
     """ Returns the top 10 numbers in the drawings and the top 5 powerball numbers from the drawings """
 
@@ -69,21 +73,22 @@ def countRepeats(five, pb):
     sorted_pb = sorted(pb.items(), key=lambda x: x[1], reverse=True)
     top_10 = sorted_items[:10]
     top_5 = sorted_pb[:5]
-
+    mid_24 = sorted_items[11:35]
+    mid_25 = sorted_items[36:58]
     low_10 = sorted_items[-10:]
     low_10_pb = sorted_pb[-10:]
+
     top_10_list = [{key: round((value/d_length)*100)} for key, value in top_10]
     top_pb_list = [{key: round((value/d_length)*100)} for key, value in top_5]
     low_10_list = [{key: round((value/d_length)*100)} for key, value in low_10]
     low_pb_list = [{key: round((value/d_length)*100)} for key, value in low_10_pb]
+    mid_24_list = [{key: round((value/d_length)*100)} for key, value in mid_24]
+    mid_25_list = [{key: round((value/d_length)*100)} for key, value in mid_25]
 
-    readingRepeats(top_10_list, top_pb_list, low_10_list, low_pb_list)
-    analyze(top_10_list)
-    analyze(low_10_list)
-    return top_10_list, top_pb_list, low_10_list, low_pb_list
+    return top_10_list, top_pb_list, low_10_list, low_pb_list, mid_24_list, mid_25_list
 
 
-def readingRepeats(top_10_list, top_pb_list, low_10_list, low_pb_list):
+def readingRepeats(top_10_list, top_pb_list, low_10_list, low_pb_list, mid_24_list, mid_25_list):
     """ Returns a print out of the top 10 number, top 5 powerball numbers, the lowest 10 numbers and powerball numbers """
 
     output = "The top 10 numbers are: "
@@ -91,25 +96,45 @@ def readingRepeats(top_10_list, top_pb_list, low_10_list, low_pb_list):
         for key, value in i.items():
             output += f'{key}: {value}% | '
     print(output)
+    print_line()
 
     output = "The top 5 powerball numbers are: "
     for i in top_pb_list:
         for key, value in i.items():
             output += f'{key}: {value}% | '
     print(output)
+    print_line()
 
     output = "The lowest 10 numbers are: "
     for i in low_10_list:
         for key, value in i.items():
             output += f'{key}: {value}% | '
     print(output)
+    print_line()
 
     output = "The lowest 10 powerball numbers are: "
     for i in low_pb_list:
         for key, value in i.items():
             output += f'{key}: {value}% | '
     print(output)
+    print_line()
 
+    output = "The next top 24 numbers are: "
+    for i in mid_24_list:
+        for key, value in i.items():
+            output += f'{key}: {value}% | '
+    print(output)
+    print_line()
+
+    output = "The last 25 numbers are: "
+    for i in mid_25_list:
+        for key, value in i.items():
+            output += f'{key}: {value}% | '
+    print(output)
+    print_line()
+
+    return
+    
 
 def analyze(top):
     top_list = []
@@ -119,13 +144,10 @@ def analyze(top):
             top_list.append(key)
 
     top_list = sorted(top_list)
-    #print(top_list)
-    analyzed_ds = analyze_ds(dataset, set(top_list), 'The top 10 numbers')
-    print(f'Top 10 numbers usually only appear {analyzed_ds[0][0]} time(s) per drawing.')
 
-    #return set(top_list)
+    return set(top_list)
 
-
+      
 def analyze_ds(data_set, top, pre):
     for data in data_set:
         count = 0
@@ -139,51 +161,116 @@ def analyze_ds(data_set, top, pre):
         
     sorted_nums = sorted(repeat_dict.items(), key=lambda x: x[1], reverse=True)
 
-    print(f'{pre} appeared {sorted_nums[0][0]} times {sorted_nums[0][1]}/{d_length} times,')
-    print(f'{pre} appeared {sorted_nums[1][0]} times {sorted_nums[1][1]}/{d_length} times,')
-    print(f'{pre} appeared {sorted_nums[2][0]} times {sorted_nums[2][1]}/{d_length} times,')
-    print(f'{pre} appeared {sorted_nums[3][0]} times {sorted_nums[3][1]}/{d_length} times,')
-    print(f'{pre} appeared {sorted_nums[4][0]} times {sorted_nums[4][1]}/{d_length} times,')
-
+    print(f'{pre} appeared {sorted_nums[0][0]} times {sorted_nums[0][1]}/{d_length} times | {sorted_nums[1][0]} times {sorted_nums[1][1]}/{d_length} times | {sorted_nums[2][0]} times {sorted_nums[2][1]}/{d_length} times | {sorted_nums[3][0]} times {sorted_nums[3][1]}/{d_length} times.')
+    print_line()
     
     return sorted_nums
 
-# Used for the analyzed_ds function:  gets the count of occurences of each number in the drawing and the powerball number
-first_numbers, powerball = countNumbers(dataset)
-analyze_ds_patterns(dataset)
-countRepeats(first_numbers, powerball)
 
-#top_10_list, top_pb_list, low_10_list, low_pb_list = countRepeats(first_numbers, powerball)
-#readingRepeats(top_10_list, top_pb_list, low_10_list, low_pb_list)
+def get_lists(num_list):
+    lows, mids, highs = [], [], []
 
+    for i in num_list[:4]:
+        for k in i.keys():
+            if k <= 22:
+                lows.append(k)
+            elif k > 22 and k < 47:
+                mids.append(k)
+            else:
+                highs.append(k)
 
-""" 
-# Used for the repeat_dict function
-#top_10 = analyze(top_10_list)
-#top_pb = analyze(top_pb_list)
-repeat_dict_nums = analyze_ds(dataset, top_10)
-print("type: ", type(repeat_dict_nums))
-#sorted_nums = sorted(analyzed_ds.items(), key=lambda x: x[1], reverse=True)
-print("Repeats: ", repeat_dict_nums)
-repeat_dict_pb = analyze_ds(dataset, top_pb)
-sorted_top_10 = sorted(repeat_dict_nums.items(), key=lambda x: x[1], reverse=True)
-sorted_top_10_pb = sorted(repeat_dict_pb.items(), key=lambda x: x[1], reverse=True)
- """
+    return lows, mids, highs
 
 
+def pick_numbers(highest_pattern, top_10_list, top_pb_list, low_10_list, mid_24_list, mid_25_list):
+    """ l = 1 - 22  m = 23 - 46  h = 47 - 69 """
+
+    top_10_lows, top_10_mids, top_10_highs = get_lists(top_10_list)
+    print(f'top_10_lows, top_10_mids, top_10_highs: {top_10_lows}, {top_10_mids}, {top_10_highs}')
+    low_10_lows, low_10_mids, low_10_highs = get_lists(low_10_list)
+    print(f'low_10_lows, low_10_mids, low_10_highs: {low_10_lows}, {low_10_mids}, {low_10_highs}')
+    mid_24_lows, mid_24_mids, mid_24_highs = get_lists(mid_24_list)
+    print(f'mid_24_lows, mid_24_mids, mid_24_highs: {mid_24_lows}, {mid_24_mids}, {mid_24_highs}')
+    mid_25_lows, mid_25_mids, mid_25_highs = get_lists(mid_25_list)
+    print(f'mid_25_lows, mid_25_mids, mid_25_highs: {mid_25_lows}, {mid_25_mids}, {mid_25_highs}')
+
+    ticket_1, ticket_2, ticket_3, ticket_4, ticket_5 = [], [], [], [], []
+    print_line()
+    print(highest_pattern)
+
+    # 
+    top_10_count, low_10_count, high_mid_count, low_mid_count = 0, 0, 0, 0
+    print(f'Pick 1 from Top 10, 1 Low 10, 1 High Mid, 2 Low Mid and 1 PB')
+    for l in highest_pattern[:5]:
+        if l == "L":
+            print(f'Pick 1 from Top 10: {top_10_lows}')
+            print(f'Pick 1 from Top 10: {low_10_lows}')
+            print(f'Pick 1 from Top 10: {mid_24_lows}')
+            print(f'Pick 2 from Top 10: {mid_25_lows}')
+            print_line()
+        elif l == "M":
+            print(f'Pick 1 from Top 10: {top_10_mids}')
+            print(f'Pick 1 from Top 10: {low_10_mids}')
+            print(f'Pick 1 from Top 10: {mid_24_mids}')
+            print(f'Pick 2 from Top 10: {mid_25_mids}')
+            print_line()
+        else:
+            print(f'Pick 1 from Top 10: {top_10_highs}')
+            print(f'Pick 1 from Top 10: {low_10_highs}')
+            print(f'Pick 1 from Top 10: {mid_24_highs}')
+            print(f'Pick 2 from Top 10: {mid_25_highs}')
+            print_line()
+
+    print(f'Pick a Powerball Number: {top_pb_list}')
+
+    """ for l in highest_pattern:
+        if l == "L":
+            print("low")
+        elif l == "M":
+            print("mid")
+        else:
+            print("high")
+    for i in top_10_list:
+        for k in i.keys():
+            print(k) """
+
+    """
+    numbers = []
+    temp = []
+    top_10_lows, top_10_mids, top_10_highs = [], [], []
+    low_10_lows, low_10_mids, low_10_highs = [], [], []
+
+
+    """
+
+
+    return
 
 
 
-""" print(f'These are the top 10 numbers in a list: {sorted(top_10)}')
-print(f'These are the top powerballs in a list: {sorted(top_pb)}')
-print(f'The Top 10 numbers were in a drawing {sorted_top_10[0][0]} time(s) for a total of {sorted_top_10[0][1]} times which is {(sorted_top_10[0][1]/d_length)*100}% of the time')
-print(f'The Top 10 numbers were in a drawing {sorted_top_10[1][0]} time(s) for a total of {sorted_top_10[1][1]} times which is {(sorted_top_10[1][1]/d_length)*100}% of the time')
-print(f'The Top 10 powerball were in a drawing {sorted_top_10_pb[0][0]} time(s) for a total of {sorted_top_10_pb[0][1]} times which is {(sorted_top_10_pb[0][1]/d_length)*100}% of the time')
+def main_loop():
+    first_numbers, powerball = countNumbers(dataset)
+    highest_pattern = analyze_ds_patterns(dataset)
+    
+    top_10_list, top_pb_list, low_10_list, low_pb_list, mid_24_list, mid_25_list = countRepeats(first_numbers, powerball)
 
-print(sorted_top_10) """
+    readingRepeats(top_10_list, top_pb_list, low_10_list, low_pb_list, mid_24_list, mid_25_list)
 
-#print(count_dict)
-#
-#analyze(top_10_list)
-#analyze_ds(dataset)
-#
+    a_top_10 = analyze(top_10_list)
+    analyze_ds(dataset, a_top_10, "The top 10 numbers")
+    
+    a_low_10 = analyze(low_10_list)
+    analyze_ds(dataset, a_low_10, "The low 10 numbers")
+
+    a_mid_24 = analyze(mid_24_list)
+    analyze_ds(dataset, a_mid_24, "The high mid numbers")
+
+    a_mid_25 = analyze(mid_25_list)
+    analyze_ds(dataset, a_mid_25, "The low mid numbers")
+
+    pick_numbers(highest_pattern, top_10_list, top_pb_list, low_10_list, mid_24_list, mid_25_list)
+
+
+
+
+main_loop()
